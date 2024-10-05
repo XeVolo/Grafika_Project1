@@ -13,8 +13,10 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
+        
 
 
         <StackPanel Grid.Column="0" Background="#ffffff" VerticalAlignment="Stretch" 
@@ -56,7 +58,16 @@
             </GroupBox>
 
             <Separator Margin="0,20,0,10"/>
-
+            <Button Content="Nowy obiekt" 
+                    Click="Reset_Button" 
+                    Padding="10" 
+                    Margin="0,10,0,20" 
+                    Background="Brown" 
+                    Foreground="White" 
+                    FontSize="16" 
+                    FontWeight="Bold" 
+                    Cursor="Hand">
+            </Button>
         </StackPanel>
 
         <Border Grid.Column="1" BorderThickness="1" BorderBrush="Black" Margin="10" CornerRadius="5">
@@ -68,18 +79,26 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="10,10,10,10">
-            
-            <TextBlock Text="Współrzędna X:" FontWeight="Bold" Margin="0,10,10,5" />
-            <TextBox x:Name="XCoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0" />
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
 
-            <TextBlock Text="Współrzędna Y:" FontWeight="Bold" Margin="0,10,10,5" />
-            <TextBox x:Name="YCoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
+            <TextBlock Grid.Row="1" Text="Współrzędna X1:" FontWeight="Bold" Margin="0,10,10,5" />
+            <TextBox Grid.Row="1" x:Name="X1CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0" />
+
+            <TextBlock Text="Współrzędna Y1:" FontWeight="Bold" Margin="0,10,10,5" />
+            <TextBox x:Name="Y1CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
 
             <TextBlock Text="Grubość linii:" FontWeight="Bold" Margin="0,10,10,5" />
             <TextBox x:Name="LineThicknessTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
 
-            <Button Content="Ustaw" Width="100" Click="SetLineProperties_Click" Margin="0,10,0,0"/>
+            <Button Content="Ustaw" Width="100" Click="SetProperties_Click" Margin="0,10,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
+
+            <TextBlock Grid.Row="1" Text="Współrzędna X2:" FontWeight="Bold" Margin="0,10,10,5" />
+            <TextBox Grid.Row="1" x:Name="X2CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0" />
+
+            <TextBlock Text="Współrzędna Y2:" FontWeight="Bold" Margin="0,10,10,5" />
+            <TextBox x:Name="Y2CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
         </StackPanel>
 
     </Grid>
