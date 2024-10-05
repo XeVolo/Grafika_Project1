@@ -50,7 +50,6 @@
             <GroupBox Header="Narzędzia" Padding="10" FontSize="14" FontWeight="Bold" Background="White">
                 <StackPanel Orientation="Vertical">
                     <RadioButton Content="Kursor" GroupName="Tools" Checked="Cursor_Selected" FontSize="14" Padding="5" Cursor="Hand" IsChecked="True"/>
-                    <RadioButton Content="Ołówek" GroupName="Tools" Checked="Pencil_Selected" FontSize="14" Padding="5" Cursor="Hand"/>
                     <RadioButton Content="Linia" GroupName="Tools" Checked="Line_Selected" FontSize="14" Padding="5" Cursor="Hand"/>
                     <RadioButton Content="Prostokąt" GroupName="Tools" Checked="Rectangle_Selected" FontSize="14" Padding="5" Cursor="Hand"/>
                     <RadioButton Content="Okrąg" GroupName="Tools" Checked="Circle_Selected" FontSize="14" Padding="5" Cursor="Hand"/>

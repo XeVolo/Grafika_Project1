@@ -9,7 +9,6 @@ namespace Project1
     internal enum DrawingMode
     {
         Cursor,
-        Pencil,
         Line,
         Rectangle,
         Circle
