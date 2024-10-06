@@ -49,7 +49,7 @@
 
             <GroupBox Header="Narzędzia" Padding="10" FontSize="14" FontWeight="Bold" Background="White">
                 <StackPanel Orientation="Vertical">
-                    <RadioButton Content="Kursor" GroupName="Tools" Checked="Cursor_Selected" FontSize="14" Padding="5" Cursor="Hand" IsChecked="True"/>
+                    <RadioButton Content="Kursor" GroupName="Tools" Checked="Cursor_Selected" FontSize="14" Padding="5" Cursor="Hand" />
                     <RadioButton Content="Linia" GroupName="Tools" Checked="Line_Selected" FontSize="14" Padding="5" Cursor="Hand"/>
                     <RadioButton Content="Prostokąt" GroupName="Tools" Checked="Rectangle_Selected" FontSize="14" Padding="5" Cursor="Hand"/>
                     <RadioButton Content="Okrąg" GroupName="Tools" Checked="Circle_Selected" FontSize="14" Padding="5" Cursor="Hand"/>
@@ -77,8 +77,8 @@
                     MouseUp="Canvas_MouseUp" />
             </Grid>
         </Border>
-
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
+        <StackPanel x:Name="BasicStackPanel" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical"  Visibility="Visible">
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
 
             <TextBlock Grid.Row="1" Text="Współrzędna X1:" FontWeight="Bold" Margin="0,10,10,5" />
             <TextBox Grid.Row="1" x:Name="X1CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0" />
@@ -91,15 +91,36 @@
 
             <Button Content="Ustaw" Width="100" Click="SetProperties_Click" Margin="0,10,0,0"/>
         </StackPanel>
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
 
-            <TextBlock Grid.Row="1" Text="Współrzędna X2:" FontWeight="Bold" Margin="0,10,10,5" />
-            <TextBox Grid.Row="1" x:Name="X2CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0" />
+                <TextBlock Grid.Row="1" Text="Współrzędna X2:" FontWeight="Bold" Margin="0,10,10,5" />
+                <TextBox Grid.Row="1" x:Name="X2CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0" />
 
-            <TextBlock Text="Współrzędna Y2:" FontWeight="Bold" Margin="0,10,10,5" />
-            <TextBox x:Name="Y2CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
+                <TextBlock Text="Współrzędna Y2:" FontWeight="Bold" Margin="0,10,10,5" />
+                <TextBox x:Name="Y2CoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
+            </StackPanel>
         </StackPanel>
+        
+        <StackPanel x:Name="CircleStackPanel" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical"  Visibility="Collapsed">
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
 
+                <TextBlock Grid.Row="1" Text="Współrzędna środka X1:" FontWeight="Bold" Margin="0,10,10,5" />
+                <TextBox Grid.Row="1" x:Name="X1CircleCoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0" />
+
+                <TextBlock Text="Współrzędna środka Y1:" FontWeight="Bold" Margin="0,10,10,5" />
+                <TextBox x:Name="Y1CircleCoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
+
+                <Button Content="Ustaw" Width="100" Click="SetProperties_Click" Margin="0,10,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
+
+                <TextBlock Text="Promień:" FontWeight="Bold" Margin="0,10,10,5" />
+                <TextBox x:Name="RadiusTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
+
+                <TextBlock Text="Grubość linii:" FontWeight="Bold" Margin="0,10,10,5" />
+                <TextBox x:Name="CircleLineThicknessTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 
 
