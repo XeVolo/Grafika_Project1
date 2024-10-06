@@ -20,8 +20,8 @@ namespace Project1
         private bool _isDrawing;
         private Point _startPoint;
         private DrawingMode _currentDravingMode;
-        private Line _currentLine;
-        private Rectangle _currentRectangle;
+        private Line? _currentLine;
+        private Rectangle? _currentRectangle;
         private Point _offset;
         public MainWindow()
         {
@@ -67,6 +67,7 @@ namespace Project1
                             Canvas.SetLeft(_currentRectangle, _startPoint.X);
                             Canvas.SetTop(_currentRectangle, _startPoint.Y);
 
+                            _currentRectangle.MouseLeftButtonDown += ChangeRectangleProperties;
                             DrawCanvas.Children.Add(_currentRectangle);
 
                             X1CoordinateTextBox.Text = _startPoint.X.ToString("F0");
@@ -97,12 +98,34 @@ namespace Project1
                             _currentLine.X2 += currentPosition.X - _offset.X;
                             _currentLine.Y2 += currentPosition.Y - _offset.Y;
 
-                            // Aktualizacja offsetu
+                            
                             _offset = currentPosition;
+
                             X1CoordinateTextBox.Text = _currentLine.X1.ToString("F0");
                             Y1CoordinateTextBox.Text = _currentLine.Y1.ToString("F0");
                             X2CoordinateTextBox.Text = _currentLine.X2.ToString("F0");
                             Y2CoordinateTextBox.Text = _currentLine.Y2.ToString("F0");
+                        } else if (_isDrawing && _currentRectangle != null)
+                        {
+                            Point currentPosition = e.GetPosition(DrawCanvas);
+                            double offsetX = currentPosition.X - _offset.X;
+                            double offsetY = currentPosition.Y - _offset.Y;
+
+                            Canvas.SetLeft(_currentRectangle, Canvas.GetLeft(_currentRectangle) + offsetX);
+                            Canvas.SetTop(_currentRectangle, Canvas.GetTop(_currentRectangle) + offsetY);
+
+                            _offset = currentPosition;
+
+                            double rectLeft = Canvas.GetLeft(_currentRectangle);
+                            double rectTop = Canvas.GetTop(_currentRectangle);
+                            double rectRight = rectLeft + _currentRectangle.Width;
+                            double rectBottom = rectTop + _currentRectangle.Height;
+
+                            X1CoordinateTextBox.Text = rectLeft.ToString("F0");
+                            Y1CoordinateTextBox.Text = rectTop.ToString("F0");
+                            X2CoordinateTextBox.Text = rectRight.ToString("F0");
+                            Y2CoordinateTextBox.Text = rectBottom.ToString("F0");
+                            LineThicknessTextBox.Text = _currentRectangle.StrokeThickness.ToString("F0");
                         }
                         break;
                     }               
@@ -203,6 +226,32 @@ namespace Project1
                 }
             }
         }
+        private void ChangeRectangleProperties(object sender, MouseButtonEventArgs e)
+        {
+
+            if (_currentDravingMode.Equals(DrawingMode.Cursor))
+            {
+                _currentLine = null;
+                _offset = e.GetPosition(DrawCanvas);
+                Rectangle clickedRectangle = sender as Rectangle;
+                if (clickedRectangle != null)
+                {
+
+                    _currentRectangle = clickedRectangle;
+
+                    double rectLeft = Canvas.GetLeft(_currentRectangle);
+                    double rectTop = Canvas.GetTop(_currentRectangle);
+                    double rectRight = rectLeft + _currentRectangle.Width;
+                    double rectBottom = rectTop + _currentRectangle.Height;
+
+                       X1CoordinateTextBox.Text = rectLeft.ToString("F0");
+                       Y1CoordinateTextBox.Text = rectTop.ToString("F0");
+                       X2CoordinateTextBox.Text = rectRight.ToString("F0");
+                       Y2CoordinateTextBox.Text = rectBottom.ToString("F0");
+                       LineThicknessTextBox.Text = clickedRectangle.StrokeThickness.ToString("F0");
+                }
+            }
+        }
         private void SetProperties_Click(object sender, RoutedEventArgs e)
         {
             switch (_currentDravingMode)
@@ -215,7 +264,7 @@ namespace Project1
                         }
                         else if (_currentRectangle != null)
                         {
-
+                            EditRectangle();
                         }
                         
                         break;
@@ -237,6 +286,10 @@ namespace Project1
                         if(_currentRectangle == null)
                         {
                             NewRectangle();
+                        }
+                        else if (_currentRectangle != null)
+                        {
+                            EditRectangle();
                         }
                         break;
                     }
@@ -303,7 +356,6 @@ namespace Project1
                 Canvas.SetLeft(_currentRectangle, x1);
                 Canvas.SetTop(_currentRectangle, y1);
 
-
                 double width = x2 - x1;
                 double height = y2 - y1;
                 
@@ -327,34 +379,47 @@ namespace Project1
                     double.TryParse(Y2CoordinateTextBox.Text, out double y2) &&
                     double.TryParse(LineThicknessTextBox.Text, out double thickness))
             {
-                _currentLine = new Line
-                {
-                    Stroke = Brushes.Black,
-                    StrokeThickness = thickness,
-                    X1 = x1,
-                    Y1 = y1,
-                    X2 = x2,
-                    Y2 = y2
-                };
-                _currentLine.MouseLeftButtonDown += ChangeLineProperties;
-                DrawCanvas.Children.Add(_currentLine);
+                _currentRectangle.StrokeThickness = thickness;
+                Canvas.SetLeft(_currentRectangle, x1);
+                Canvas.SetTop(_currentRectangle, y1);
+
+                double width = x2 - x1;
+                double height = y2 - y1;
+
+                _currentRectangle.Width = Math.Abs(width);
+                _currentRectangle.Height = Math.Abs(height);
+
+                if (width < 0)
+                    Canvas.SetLeft(_currentRectangle, x2);
+                if (height < 0)
+                    Canvas.SetTop(_currentRectangle, y2);
             }
         }
 
+        
+
         private void Cursor_Selected(object sender, RoutedEventArgs e)
         {
+            _currentRectangle = null;
+            _currentLine= null;
             _currentDravingMode = DrawingMode.Cursor;
         }
         private void Line_Selected(object sender, RoutedEventArgs e)
         {
+            _currentRectangle = null;
+            _currentLine = null;
             _currentDravingMode = DrawingMode.Line;
         }
         private void Rectangle_Selected(object sender, RoutedEventArgs e)
         {
+            _currentRectangle = null;
+            _currentLine = null;
             _currentDravingMode = DrawingMode.Rectangle;
         }
         private void Circle_Selected(object sender, RoutedEventArgs e)
         {
+            _currentRectangle = null;
+            _currentLine = null;
             _currentDravingMode = DrawingMode.Circle;
         }
                
