@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 
 namespace Project1
 {
@@ -27,6 +29,7 @@ namespace Project1
         private Rectangle? _currentRectangle;
         private Ellipse? _currentCircle;
         private Point _offset;
+        private List<Figure> figures=new List<Figure>();
         public MainWindow()
         {
             _currentDravingMode = DrawingMode.Cursor;
@@ -294,7 +297,57 @@ namespace Project1
                     DrawCanvas.Children.Clear();
                     foreach (UIElement element in loadedCanvas.Children)
                     {
-                        DrawCanvas.Children.Add(element);
+                        if (element is Line line)
+                        {
+                            Line newLine = new Line
+                            {
+                                Stroke = Brushes.Black,
+                                StrokeThickness = line.StrokeThickness,
+                                X1 = line.X1,
+                                Y1 = line.Y1,
+                                X2 = line.X2,
+                                Y2 = line.Y2
+                            };
+                            newLine.MouseLeftButtonDown += ChangeLineProperties;
+                            DrawCanvas.Children.Add(newLine);
+                        }
+                        else if (element is Rectangle rectangle)
+                        {
+                            Rectangle newRectangle = new Rectangle
+                            {
+                                Stroke = Brushes.Black,
+                                StrokeThickness = rectangle.StrokeThickness,
+                                Fill = Brushes.Transparent
+                            };
+
+                            Canvas.SetLeft(newRectangle, Canvas.GetLeft(rectangle));
+                            Canvas.SetTop(newRectangle, Canvas.GetTop(rectangle));
+
+                            newRectangle.Width = rectangle.Width;
+                            newRectangle.Height = rectangle.Height;
+
+                            newRectangle.MouseLeftButtonDown += ChangeRectangleProperties;
+                            DrawCanvas.Children.Add(newRectangle);
+                        }
+                        else if (element is Ellipse circle)
+                        {
+                            Ellipse newCircle = new Ellipse
+                            {
+                                Stroke = Brushes.Black,
+                                StrokeThickness = circle.StrokeThickness,
+                                Fill = Brushes.Transparent
+                            };
+
+                            newCircle.Width = circle.Width;
+                            newCircle.Height = circle.Height;
+
+
+                            Canvas.SetLeft(newCircle, Canvas.GetLeft(circle));
+                            Canvas.SetTop(newCircle, Canvas.GetTop(circle));
+
+                            newCircle.MouseLeftButtonDown += ChangeCircleProperties;
+                            DrawCanvas.Children.Add(newCircle);
+                        }
                     }
                 }
             }
