@@ -1,10 +1,13 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Win32;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -255,11 +258,46 @@ namespace Project1
         }
         private void Save_Button(object sender, RoutedEventArgs e)
         {
-            
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "XAML Files (*.xaml)|*.xaml",
+                Title = "Zapisz Canvas do pliku"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
+                {
+                    // Serializuj zawartość Canvas (np. kształty) do pliku XAML
+                    string xaml = XamlWriter.Save(DrawCanvas);
+                    sw.Write(xaml);
+                }
+            }
         }
         private void Load_Button(object sender, RoutedEventArgs e)
         {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "XAML Files (*.xaml)|*.xaml",
+                Title = "Wczytaj Canvas z pliku"
+            };
 
+            if (openFileDialog.ShowDialog() == true)
+            {
+                using (StreamReader sr = new StreamReader(openFileDialog.FileName))
+                {
+                    string xaml = sr.ReadToEnd();
+                    // Wczytaj zawartość Canvas z pliku XAML
+                    Canvas loadedCanvas = (Canvas)XamlReader.Parse(xaml);
+
+                    // Usuń poprzednie elementy i zastąp nowo wczytanymi
+                    DrawCanvas.Children.Clear();
+                    foreach (UIElement element in loadedCanvas.Children)
+                    {
+                        DrawCanvas.Children.Add(element);
+                    }
+                }
+            }
         }
 
         private void ChangeLineProperties(object sender, MouseButtonEventArgs e)
