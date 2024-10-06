@@ -23,16 +23,16 @@ namespace Project1
     public partial class MainWindow : Window
     {
         private bool _isDrawing;
+        private bool _isEditing;
         private Point _startPoint;
-        private DrawingMode _currentDravingMode;
+        private DrawingMode _currentDrawingMode;
         private Line? _currentLine;
         private Rectangle? _currentRectangle;
         private Ellipse? _currentCircle;
         private Point _offset;
-        private List<Figure> figures=new List<Figure>();
         public MainWindow()
         {
-            _currentDravingMode = DrawingMode.Cursor;
+            _currentDrawingMode = DrawingMode.Cursor;
             InitializeComponent();
         }
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -42,7 +42,7 @@ namespace Project1
                 _startPoint = e.GetPosition(DrawCanvas);
                 _isDrawing = true;
 
-                switch (_currentDravingMode)
+                switch (_currentDrawingMode)
                 {
                     case DrawingMode.Line:
                         {
@@ -104,11 +104,15 @@ namespace Project1
                         }
                 }
             }
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                _isEditing = true;
+            }
         }
        
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            switch (_currentDravingMode)
+            switch (_currentDrawingMode)
             {
                 case DrawingMode.Cursor:
                     {
@@ -167,6 +171,53 @@ namespace Project1
                             Y1CircleCoordinateTextBox.Text = centerY.ToString("F0");
                             RadiusTextBox.Text = radius.ToString("F0");
                             CircleLineThicknessTextBox.Text = _currentCircle.StrokeThickness.ToString("F0");
+                        }
+                        if (_isEditing && _currentLine != null)
+                        {
+                            // Pobieramy aktualną pozycję kursora
+                            Point currentPoint = e.GetPosition(DrawCanvas);
+
+                            // Aktualizujemy współrzędne końcowego punktu linii
+                            _currentLine.X2 = currentPoint.X;
+                            _currentLine.Y2 = currentPoint.Y;
+                            X2CoordinateTextBox.Text = _currentLine.X2.ToString("F0");
+                            Y2CoordinateTextBox.Text = _currentLine.Y2.ToString("F0");
+                        }
+                        else if (_isEditing && _currentRectangle != null)
+                        {
+                            // Obliczanie aktualnego rozmiaru prostokąta
+                            Point currentPoint = e.GetPosition(DrawCanvas);
+                            double width = currentPoint.X - _startPoint.X;
+                            double height = currentPoint.Y - _startPoint.Y;
+
+                            // Ustawiamy szerokość i wysokość prostokąta
+                            _currentRectangle.Width = Math.Abs(width);
+                            _currentRectangle.Height = Math.Abs(height);
+
+                            // Przemieszczamy prostokąt, jeśli rysujemy od prawego do lewego
+                            if (width < 0)
+                                Canvas.SetLeft(_currentRectangle, currentPoint.X);
+                            if (height < 0)
+                                Canvas.SetTop(_currentRectangle, currentPoint.Y);
+
+                            X2CoordinateTextBox.Text = currentPoint.X.ToString("F0");
+                            Y2CoordinateTextBox.Text = currentPoint.Y.ToString("F0");
+                        }
+                        else if (_isEditing && _currentCircle != null)
+                        {
+                            Point currentPoint = e.GetPosition(DrawCanvas);
+                            double radius = Math.Sqrt(Math.Pow(currentPoint.X - _startPoint.X, 2) + Math.Pow(currentPoint.Y - _startPoint.Y, 2));
+
+                            _currentCircle.Width = radius * 2;
+                            _currentCircle.Height = radius * 2;
+
+
+                            Canvas.SetLeft(_currentCircle, _startPoint.X - radius);
+                            Canvas.SetTop(_currentCircle, _startPoint.Y - radius);
+
+
+
+                            RadiusTextBox.Text = radius.ToString("F0");
                         }
                         break;
                     }               
@@ -235,9 +286,8 @@ namespace Project1
 
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            _isDrawing = false; 
-                    
-            
+            _isDrawing = false;
+            _isEditing = false;                 
         }
         private void Reset_Button(object sender, RoutedEventArgs e)
         {
@@ -356,7 +406,7 @@ namespace Project1
         private void ChangeLineProperties(object sender, MouseButtonEventArgs e)
         {
             
-            if (_currentDravingMode.Equals(DrawingMode.Cursor))
+            if (_currentDrawingMode.Equals(DrawingMode.Cursor))
             {
                 BasicStackPanel.Visibility = Visibility.Visible;
                 CircleStackPanel.Visibility = Visibility.Collapsed;
@@ -379,7 +429,7 @@ namespace Project1
         private void ChangeRectangleProperties(object sender, MouseButtonEventArgs e)
         {
 
-            if (_currentDravingMode.Equals(DrawingMode.Cursor))
+            if (_currentDrawingMode.Equals(DrawingMode.Cursor))
             {
                 BasicStackPanel.Visibility = Visibility.Visible;
                 CircleStackPanel.Visibility = Visibility.Collapsed;
@@ -408,7 +458,7 @@ namespace Project1
         private void ChangeCircleProperties(object sender, MouseButtonEventArgs e)
         {
 
-            if (_currentDravingMode.Equals(DrawingMode.Cursor))
+            if (_currentDrawingMode.Equals(DrawingMode.Cursor))
             {
                 BasicStackPanel.Visibility = Visibility.Collapsed;
                 CircleStackPanel.Visibility = Visibility.Visible;
@@ -433,7 +483,7 @@ namespace Project1
         }
         private void SetProperties_Click(object sender, RoutedEventArgs e)
         {
-            switch (_currentDravingMode)
+            switch (_currentDrawingMode)
             {
                 case DrawingMode.Cursor:
                     {
@@ -636,28 +686,28 @@ namespace Project1
             BasicStackPanel.Visibility = Visibility.Visible;
             CircleStackPanel.Visibility = Visibility.Collapsed;
             Reset();
-            _currentDravingMode = DrawingMode.Cursor;
+            _currentDrawingMode = DrawingMode.Cursor;
         }
         private void Line_Selected(object sender, RoutedEventArgs e)
         {
             BasicStackPanel.Visibility = Visibility.Visible;
             CircleStackPanel.Visibility = Visibility.Collapsed;
             Reset();
-            _currentDravingMode = DrawingMode.Line;
+            _currentDrawingMode = DrawingMode.Line;
         }
         private void Rectangle_Selected(object sender, RoutedEventArgs e)
         {
             BasicStackPanel.Visibility = Visibility.Visible;
             CircleStackPanel.Visibility = Visibility.Collapsed;
             Reset();
-            _currentDravingMode = DrawingMode.Rectangle;
+            _currentDrawingMode = DrawingMode.Rectangle;
         }
         private void Circle_Selected(object sender, RoutedEventArgs e)
         {
             BasicStackPanel.Visibility = Visibility.Collapsed;
             CircleStackPanel.Visibility = Visibility.Visible;
             Reset();
-            _currentDravingMode = DrawingMode.Circle;
+            _currentDrawingMode = DrawingMode.Circle;
         }
                
     }
