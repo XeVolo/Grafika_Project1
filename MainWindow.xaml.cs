@@ -116,7 +116,7 @@ namespace Project1
                             _currentLine.Y1 += currentPosition.Y - _offset.Y;
                             _currentLine.X2 += currentPosition.X - _offset.X;
                             _currentLine.Y2 += currentPosition.Y - _offset.Y;
-
+                             
                             
                             _offset = currentPosition;
 
