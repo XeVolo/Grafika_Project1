@@ -26,14 +26,16 @@ namespace Project1
         private bool _isEditing;
         private Point _startPoint;
         private DrawingMode _currentDrawingMode;
-        private Line? _currentLine;
-        private Rectangle? _currentRectangle;
-        private Ellipse? _currentCircle;
+        public Line? _currentLine;
+        public Rectangle? _currentRectangle;
+        public Ellipse? _currentCircle;
         private Point _offset;
+        private TextDrawing _textdrawing;
         public MainWindow()
         {
             _currentDrawingMode = DrawingMode.Cursor;
             InitializeComponent();
+            _textdrawing = new TextDrawing(this);
         }
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -174,10 +176,10 @@ namespace Project1
                         }
                         if (_isEditing && _currentLine != null)
                         {
-                            // Pobieramy aktualną pozycję kursora
+
                             Point currentPoint = e.GetPosition(DrawCanvas);
 
-                            // Aktualizujemy współrzędne końcowego punktu linii
+
                             _currentLine.X2 = currentPoint.X;
                             _currentLine.Y2 = currentPoint.Y;
                             X2CoordinateTextBox.Text = _currentLine.X2.ToString("F0");
@@ -185,16 +187,16 @@ namespace Project1
                         }
                         else if (_isEditing && _currentRectangle != null)
                         {
-                            // Obliczanie aktualnego rozmiaru prostokąta
+
                             Point currentPoint = e.GetPosition(DrawCanvas);
                             double width = currentPoint.X - _startPoint.X;
                             double height = currentPoint.Y - _startPoint.Y;
 
-                            // Ustawiamy szerokość i wysokość prostokąta
+
                             _currentRectangle.Width = Math.Abs(width);
                             _currentRectangle.Height = Math.Abs(height);
 
-                            // Przemieszczamy prostokąt, jeśli rysujemy od prawego do lewego
+
                             if (width < 0)
                                 Canvas.SetLeft(_currentRectangle, currentPoint.X);
                             if (height < 0)
@@ -225,10 +227,10 @@ namespace Project1
                     {
                         if (_isDrawing  && _currentLine != null)
                         {
-                            // Pobieramy aktualną pozycję kursora
+
                             Point currentPoint = e.GetPosition(DrawCanvas);
 
-                            // Aktualizujemy współrzędne końcowego punktu linii
+
                             _currentLine.X2 = currentPoint.X;
                             _currentLine.Y2 = currentPoint.Y;
                             X2CoordinateTextBox.Text = _currentLine.X2.ToString("F0");
@@ -240,16 +242,16 @@ namespace Project1
                     {
                         if (_isDrawing && _currentRectangle != null)
                         {
-                            // Obliczanie aktualnego rozmiaru prostokąta
+
                             Point currentPoint = e.GetPosition(DrawCanvas);
                             double width = currentPoint.X - _startPoint.X;
                             double height = currentPoint.Y - _startPoint.Y;
 
-                            // Ustawiamy szerokość i wysokość prostokąta
+
                             _currentRectangle.Width = Math.Abs(width);
                             _currentRectangle.Height = Math.Abs(height);
 
-                            // Przemieszczamy prostokąt, jeśli rysujemy od prawego do lewego
+
                             if (width < 0)
                                 Canvas.SetLeft(_currentRectangle, currentPoint.X);
                             if (height < 0)
@@ -292,7 +294,6 @@ namespace Project1
         private void Reset_Button(object sender, RoutedEventArgs e)
         {
             Reset();
-
         }
         private void Reset()
         {
@@ -321,7 +322,7 @@ namespace Project1
             {
                 using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
                 {
-                    // Serializuj zawartość Canvas (np. kształty) do pliku XAML
+
                     string xaml = XamlWriter.Save(DrawCanvas);
                     sw.Write(xaml);
                 }
@@ -340,10 +341,10 @@ namespace Project1
                 using (StreamReader sr = new StreamReader(openFileDialog.FileName))
                 {
                     string xaml = sr.ReadToEnd();
-                    // Wczytaj zawartość Canvas z pliku XAML
+
                     Canvas loadedCanvas = (Canvas)XamlReader.Parse(xaml);
 
-                    // Usuń poprzednie elementy i zastąp nowo wczytanymi
+
                     DrawCanvas.Children.Clear();
                     foreach (UIElement element in loadedCanvas.Children)
                     {
@@ -403,7 +404,7 @@ namespace Project1
             }
         }
 
-        private void ChangeLineProperties(object sender, MouseButtonEventArgs e)
+        public void ChangeLineProperties(object sender, MouseButtonEventArgs e)
         {
             
             if (_currentDrawingMode.Equals(DrawingMode.Cursor))
@@ -426,7 +427,7 @@ namespace Project1
                 }
             }
         }
-        private void ChangeRectangleProperties(object sender, MouseButtonEventArgs e)
+        public void ChangeRectangleProperties(object sender, MouseButtonEventArgs e)
         {
 
             if (_currentDrawingMode.Equals(DrawingMode.Cursor))
@@ -455,7 +456,7 @@ namespace Project1
                 }
             }
         }
-        private void ChangeCircleProperties(object sender, MouseButtonEventArgs e)
+        public void ChangeCircleProperties(object sender, MouseButtonEventArgs e)
         {
 
             if (_currentDrawingMode.Equals(DrawingMode.Cursor))
@@ -481,7 +482,7 @@ namespace Project1
                 }
             }
         }
-        private void SetProperties_Click(object sender, RoutedEventArgs e)
+        private void SetProperties_Button(object sender, RoutedEventArgs e)
         {
             switch (_currentDrawingMode)
             {
@@ -489,14 +490,14 @@ namespace Project1
                     {
                         if (_currentLine != null)
                         {
-                            EditLine();
+                            _textdrawing.EditLine();
                         }
                         else if (_currentRectangle != null)
                         {
-                            EditRectangle();
+                            _textdrawing.EditRectangle();
                         }else if (_currentCircle != null)
                         {
-                            EditCircle();
+                            _textdrawing.EditCircle();
                         }
                         
                         break;
@@ -505,11 +506,11 @@ namespace Project1
                     {
                         if (_currentLine == null)
                         {
-                            NewLine();
+                            _textdrawing.NewLine();
                         }
                         else if (_currentLine != null)
                         {
-                            EditLine();
+                            _textdrawing.EditLine();
                         }
                         break;
                     }
@@ -517,11 +518,11 @@ namespace Project1
                     {
                         if(_currentRectangle == null)
                         {
-                            NewRectangle();
+                            _textdrawing.NewRectangle();
                         }
                         else if (_currentRectangle != null)
                         {
-                            EditRectangle();
+                            _textdrawing.EditRectangle();
                         }
                         break;
                     }
@@ -529,157 +530,16 @@ namespace Project1
                     {
                         if (_currentCircle == null)
                         {
-                            NewCircle();
+                            _textdrawing.NewCircle();
                         }
                         else if (_currentCircle != null)
                         {
-                            EditCircle();
+                            _textdrawing.EditCircle();
                         }
                         break;
                     }
             }
-        }
-
-        private void NewLine()
-        {
-            if (double.TryParse(X1CoordinateTextBox.Text, out double x1) &&
-                    double.TryParse(Y1CoordinateTextBox.Text, out double y1) &&
-                    double.TryParse(X2CoordinateTextBox.Text, out double x2) &&
-                    double.TryParse(Y2CoordinateTextBox.Text, out double y2) &&
-                    double.TryParse(LineThicknessTextBox.Text, out double thickness))
-            {
-                _currentLine = new Line
-                {
-                    Stroke = Brushes.Black,
-                    StrokeThickness = thickness,
-                    X1 = x1,
-                    Y1 = y1,
-                    X2 = x2,
-                    Y2 = y2
-                };
-                _currentLine.MouseLeftButtonDown += ChangeLineProperties;
-                DrawCanvas.Children.Add(_currentLine);
-            }
-        }
-        private void EditLine()
-        {
-            
-            if (double.TryParse(X1CoordinateTextBox.Text, out double x1) &&
-                double.TryParse(Y1CoordinateTextBox.Text, out double y1) &&
-                double.TryParse(X2CoordinateTextBox.Text, out double x2) &&
-                double.TryParse(Y2CoordinateTextBox.Text, out double y2) &&
-                double.TryParse(LineThicknessTextBox.Text, out double thickness))
-            {
-                _currentLine.X1 = x1;
-                _currentLine.Y1 = y1;
-                _currentLine.X2 = x2;
-                _currentLine.Y2 = y2;
-                _currentLine.StrokeThickness = thickness;
-            }
-        }
-        private void NewRectangle()
-        {
-            if (double.TryParse(X1CoordinateTextBox.Text, out double x1) &&
-                    double.TryParse(Y1CoordinateTextBox.Text, out double y1) &&
-                    double.TryParse(X2CoordinateTextBox.Text, out double x2) &&
-                    double.TryParse(Y2CoordinateTextBox.Text, out double y2) &&
-                    double.TryParse(LineThicknessTextBox.Text, out double thickness))
-            {
-                _currentRectangle = new Rectangle
-                {
-                    Stroke = Brushes.Black,
-                    StrokeThickness = thickness,
-                    Fill = Brushes.Transparent
-                };
-
-                Canvas.SetLeft(_currentRectangle, x1);
-                Canvas.SetTop(_currentRectangle, y1);
-
-                double width = x2 - x1;
-                double height = y2 - y1;
-                
-                _currentRectangle.Width = Math.Abs(width);
-                _currentRectangle.Height = Math.Abs(height);
-                
-                if (width < 0)
-                    Canvas.SetLeft(_currentRectangle, x2);
-                if (height < 0)
-                    Canvas.SetTop(_currentRectangle, y2);
-
-                _currentRectangle.MouseLeftButtonDown += ChangeRectangleProperties;
-                DrawCanvas.Children.Add(_currentRectangle);
-                
-            }
-        }
-        private void EditRectangle()
-        {
-            if (double.TryParse(X1CoordinateTextBox.Text, out double x1) &&
-                    double.TryParse(Y1CoordinateTextBox.Text, out double y1) &&
-                    double.TryParse(X2CoordinateTextBox.Text, out double x2) &&
-                    double.TryParse(Y2CoordinateTextBox.Text, out double y2) &&
-                    double.TryParse(LineThicknessTextBox.Text, out double thickness))
-            {
-                _currentRectangle.StrokeThickness = thickness;
-                Canvas.SetLeft(_currentRectangle, x1);
-                Canvas.SetTop(_currentRectangle, y1);
-
-                double width = x2 - x1;
-                double height = y2 - y1;
-
-                _currentRectangle.Width = Math.Abs(width);
-                _currentRectangle.Height = Math.Abs(height);
-
-                if (width < 0)
-                    Canvas.SetLeft(_currentRectangle, x2);
-                if (height < 0)
-                    Canvas.SetTop(_currentRectangle, y2);
-            }
-        }
-        private void NewCircle()
-        {
-            if (double.TryParse(X1CircleCoordinateTextBox.Text, out double x1) &&
-                    double.TryParse(Y1CircleCoordinateTextBox.Text, out double y1) &&
-                    double.TryParse(RadiusTextBox.Text, out double radius) &&
-                    double.TryParse(CircleLineThicknessTextBox.Text, out double thickness))
-            {
-                _currentCircle = new Ellipse
-                {
-                    Stroke = Brushes.Black,
-                    StrokeThickness = thickness,
-                    Fill = Brushes.Transparent
-                };
-
-                _currentCircle.Width = radius * 2;
-                _currentCircle.Height = radius * 2;
-
-
-                Canvas.SetLeft(_currentCircle, x1 - radius);
-                Canvas.SetTop(_currentCircle, y1 - radius);
-
-                _currentCircle.MouseLeftButtonDown += ChangeCircleProperties;
-                DrawCanvas.Children.Add(_currentCircle);
-
-            }
-
-        }
-        private void EditCircle()
-        {
-            if (double.TryParse(X1CircleCoordinateTextBox.Text, out double x1) &&
-                    double.TryParse(Y1CircleCoordinateTextBox.Text, out double y1) &&
-                    double.TryParse(RadiusTextBox.Text, out double radius) &&
-                    double.TryParse(CircleLineThicknessTextBox.Text, out double thickness))
-            {
-                _currentCircle.StrokeThickness= thickness;
-
-                _currentCircle.Width = radius * 2;
-                _currentCircle.Height = radius * 2;
-                Canvas.SetLeft(_currentCircle, x1 - radius);
-                Canvas.SetTop(_currentCircle, y1 - radius);
-            }
-        }
-
-
-        
+        }              
 
         private void Cursor_Selected(object sender, RoutedEventArgs e)
         {

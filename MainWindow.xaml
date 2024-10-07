@@ -89,7 +89,7 @@
             <TextBlock Text="Grubość linii:" FontWeight="Bold" Margin="0,10,10,5" />
             <TextBox x:Name="LineThicknessTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
 
-            <Button Content="Ustaw" Width="100" Click="SetProperties_Click" Margin="0,10,0,0"/>
+            <Button Content="Ustaw" Width="100" Click="SetProperties_Button" Margin="0,10,0,0"/>
         </StackPanel>
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
 
@@ -110,7 +110,7 @@
                 <TextBlock Text="Współrzędna środka Y1:" FontWeight="Bold" Margin="0,10,10,5" />
                 <TextBox x:Name="Y1CircleCoordinateTextBox" Height="20" Width="100" Margin="0,0,20,0"/>
 
-                <Button Content="Ustaw" Width="100" Click="SetProperties_Click" Margin="0,10,0,0"/>
+                <Button Content="Ustaw" Width="100" Click="SetProperties_Button" Margin="0,10,0,0"/>
             </StackPanel>
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
 
